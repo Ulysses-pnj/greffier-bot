@@ -75,7 +75,7 @@ async def ask_groq(prompt: str) -> str:
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": prompt},
             ],
-            max_tokens=70,
+            max_completion_tokens=70,
             temperature=0.7,
             timeout=30,  # Évite les timeouts de Render
         )
