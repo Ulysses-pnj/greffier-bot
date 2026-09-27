@@ -31,6 +31,18 @@ if not GROQ_KEY:
     raise SystemExit("❌ GROQ_KEY manquant dans les variables d'environnement de Render.")
 
 client_groq = Groq(api_key=GROQ_KEY)
+# --- VÉRIFICATION DES MODÈLES DISPONIBLES AU DÉMARRAGE ---
+def list_available_models():
+    try:
+        models = client_groq.models.list()
+        print("=== MODÈLES GROQ ACCESSIBLES AVEC CETTE CLÉ ===")
+        for model in models.data:
+            print(f"ID: {model.id} | Actif: {getattr(model, 'active', 'inconnu')}")
+        print("===============================================")
+    except Exception as e:
+        print(f"❌ Impossible de lister les modèles Groq : {e}")
+
+# Appelle cette fonction dans ton on_ready
 
 # --- BOT DISCORD ---
 intents = discord.Intents.default()
@@ -50,10 +62,9 @@ SYSTEM_PROMPT = (
 
 @bot.event
 async def on_ready():
-    print(f"✅ GREFFIER est en ligne 24h/24 ! Connecté en tant que {bot.user}")
-    print(f"🆔 ID du bot : {bot.user.id}")
+    print(f"✅ GREFFIER est en ligne ! Connecté en tant que {bot.user}")
+    list_available_models() # <--- Ajoute cette ligne
     print("⚖️ Prêt à juger dans Le QG.")
-
 
 async def ask_groq(prompt: str) -> str:
     """Envoie une requête à Groq et renvoie la réponse (ou un message d'erreur)."""
